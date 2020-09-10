@@ -1,0 +1,11 @@
+gcloud:
+  projectId: mm-k8s-dev-01
+  tracing:
+    enabled: false
+server:
+  host: 0.0.0.0
+  port: 8080
+  context: myservice-api
+exampleJokes:
+  url: "https://sv443.net"
+  retries: 3
