@@ -21,7 +21,10 @@ public class TestJokerServiceVertx {
 	@BeforeEach
 	void prepare(Vertx vertx, VertxTestContext testContext) {
 		webClient = WebClient.create(vertx);
-		jokerService = new JokerServiceImpl(webClient);
+		var jokesUrlAny = "https://sv443.net/jokeapi/v2/joke/Any?type=twopart";
+		var jokesUrlProgramming = "https://sv443.net/jokeapi/v2/joke/Programming?type=twopart";
+
+		jokerService = new JokerServiceImpl(webClient, jokesUrlAny, jokesUrlProgramming );
 		testContext.completeNow();
 	}
 	
