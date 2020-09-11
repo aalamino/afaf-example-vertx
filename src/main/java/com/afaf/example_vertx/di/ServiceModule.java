@@ -17,7 +17,9 @@ public class ServiceModule {
 	public JokerService provideJokerService(WebClient webClient) {
 		//TODO move this hardcoded URL to a config file
 		var jokesUrlAny = "https://sv443.net/jokeapi/v2/joke/Any?type=twopart";
+//		var jokesUrlAny = Config.getInstance().getJokesUrlAny();
 		var jokesUrlProgramming = "https://sv443.net/jokeapi/v2/joke/Programming?type=twopart";
+//		var jokesUrlProgramming = Config.getInstance().getJokesUrlProgramming();
 
 		return new JokerServiceImpl(webClient, jokesUrlAny, jokesUrlProgramming);
 	}

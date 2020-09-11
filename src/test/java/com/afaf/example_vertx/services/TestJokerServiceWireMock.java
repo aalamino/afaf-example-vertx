@@ -1,45 +1,52 @@
 package com.afaf.example_vertx.services;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
-import com.afaf.example_vertx.domain.Joke;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import io.reactivex.observers.TestObserver;
-import io.vertx.junit5.VertxExtension;
-import io.vertx.junit5.VertxTestContext;
-import io.vertx.reactivex.core.Vertx;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.junit.Assert.assertTrue;
-
-import io.vertx.reactivex.ext.web.client.WebClient;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+
+import io.vertx.junit5.VertxExtension;
+import io.vertx.junit5.VertxTestContext;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.web.client.WebClient;
+
 @ExtendWith(VertxExtension.class)
 public class TestJokerServiceWireMock {
 
-	@Mock
 	private WebClient webClient;
 	private JokerService jokerService;
 	private WireMockServer wireMockServer;
 	private int wireMockPort;
 	
+	private String setupStub = ".NET developers are picky when it comes to food.";
+	private String deliveryStub = "They only like chicken NuGet.";
+	
 	@BeforeEach
 	void prepare(Vertx vertx, VertxTestContext testContext) throws IOException {
-
-		webClient = WebClient.create(vertx);
-
 		// mock third party server
 		wireMockPort = getFreePort();
 		wireMockServer = new WireMockServer(wireMockPort, wireMockPort + 1);
 		wireMockServer.start();
 
+		webClient = WebClient.create(vertx);
+		
 		// service instance
 		var jokeURL = String.format("http://localhost:%d/lalala", wireMockPort);
-		jokerService = new JokerServiceImpl(webClient, jokeURL, jokeURL );
+		jokerService = new JokerServiceImpl(webClient, jokeURL, jokeURL);
 		testContext.completeNow();
 	}
 
@@ -51,18 +58,20 @@ public class TestJokerServiceWireMock {
 	@DisplayName("Check that jokerService gets a joke")
 	@Test
 	void getJokeTest(VertxTestContext testContext) {
-
 		// stub
 		configureFor("localhost", wireMockPort);
-		stubFor(get(anyUrl()).withHeader("Accept", equalTo("application/json")).willReturn(aResponse().withStatus(200).withBody("{\"error\":false,\"category\":\"Programming\",\"type\":\"twopart\",\"setup\":\".NET developers are picky when it comes to food.\",\"delivery\":\"They only like chicken NuGet.\",\"flags\":{\"nsfw\":false,\"religious\":false,\"political\":false,\"racist\":false,\"sexist\":false},\"id\":49,\"lang\":\"en\"}")));
-
+		stubFor(
+				get(anyUrl())
+				.withHeader("Accept", equalTo("application/json"))
+				.willReturn(aResponse()
+							.withStatus(200)
+							.withBody(getWithBodyStub())));
 		// execute
 		jokerService.getJoke().subscribe(result -> {
-			assertTrue(result.getDelivery().equalsIgnoreCase("They only like chicken NuGet."));
-			assertTrue(result.getSetup().equalsIgnoreCase(".NET developers are picky when it comes to food."));
+			assertTrue(result.getSetup().equalsIgnoreCase(setupStub));
+			assertTrue(result.getDelivery().equalsIgnoreCase(deliveryStub));
 			testContext.completeNow();
 		});
-
 	}
 
 	private int getFreePort() throws IOException {
@@ -71,4 +80,25 @@ public class TestJokerServiceWireMock {
 		socket.close();
 		return port;
 	}
+	
+	private String getWithBodyStub() {
+		StringBuilder sBuilder = new StringBuilder();
+		sBuilder.append("{");
+		sBuilder.append("\"error\":false");
+		sBuilder.append(",\"category\":\"Programming\"");
+		sBuilder.append(",\"type\":\"twopart\"");
+		sBuilder.append(",\"setup\":\"").append(setupStub).append("\"");
+		sBuilder.append(",\"delivery\":\"").append(deliveryStub).append("\"");
+		sBuilder.append(",\"flags\":{");
+			sBuilder.append("\"nsfw\":false");
+			sBuilder.append(",\"religious\":false");
+			sBuilder.append(",\"political\":false");
+			sBuilder.append(",\"racist\":false");
+			sBuilder.append(",\"sexist\":false}");
+		sBuilder.append(",\"id\":49");
+		sBuilder.append(",\"lang\":\"en\"");
+		sBuilder.append("}");
+		return sBuilder.toString();
+	}
+	
 }
