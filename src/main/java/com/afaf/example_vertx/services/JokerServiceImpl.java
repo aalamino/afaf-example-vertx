@@ -13,11 +13,15 @@ public class JokerServiceImpl implements JokerService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(JokerServiceImpl.class);
 	
-	private WebClient webClient;
+	private final WebClient webClient;
+	private final String jokesUrlAny;
+	private final String jokesUrlProgramming;
 	
 	@Inject
-	public JokerServiceImpl(WebClient webClient) {
+	public JokerServiceImpl(final WebClient webClient, final String jokeEndpointA, final String jokeEndpointB) {
 		this.webClient = webClient;
+		this.jokesUrlAny = jokeEndpointA;
+		this.jokesUrlProgramming = jokeEndpointB;
 	}
 	
 	@Override

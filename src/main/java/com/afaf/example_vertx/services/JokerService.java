@@ -7,10 +7,7 @@ import io.reactivex.Single;
 public interface JokerService {
 	
 	Single<Joke> getJoke();
-
-	String jokesUrlAny = "https://sv443.net/jokeapi/v2/joke/Any?type=twopart";
-	String jokesUrlProgramming= "https://sv443.net/jokeapi/v2/joke/Programming?type=twopart";
-//	String jokesUrl = Config.getInstance().getJokesUrl();
+	//TODO move this hardcoded Integer to a config file
 	Integer jokesRetries = 3;
 //	Integer jokesRetries = Config.getInstance().getJokesRetries().orElse(Config.DEFAULT_RETRIES);
 
