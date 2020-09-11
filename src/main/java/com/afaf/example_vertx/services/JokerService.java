@@ -7,8 +7,7 @@ import io.reactivex.Single;
 public interface JokerService {
 	
 	Single<Joke> getJoke();
-
-//	String jokesUrl = Config.getInstance().getJokesUrl();
+	//TODO move this hardcoded Integer to a config file
 	Integer jokesRetries = 3;
 //	Integer jokesRetries = Config.getInstance().getJokesRetries().orElse(Config.DEFAULT_RETRIES);
 
