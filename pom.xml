@@ -275,7 +275,7 @@
 								<configuration>
 									<resources>
 										<resource>
-											<directory>src/acceptance/resources</directory>
+											<directory>src/acceptance/resources/features</directory>
 										</resource>
 									</resources>
 								</configuration>

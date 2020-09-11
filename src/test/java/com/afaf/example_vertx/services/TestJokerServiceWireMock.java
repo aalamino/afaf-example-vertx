@@ -31,10 +31,10 @@ public class TestJokerServiceWireMock {
 	private JokerService jokerService;
 	private WireMockServer wireMockServer;
 	private int wireMockPort;
-	
+
 	private String setupStub = ".NET developers are picky when it comes to food.";
 	private String deliveryStub = "They only like chicken NuGet.";
-	
+
 	@BeforeEach
 	void prepare(Vertx vertx, VertxTestContext testContext) throws IOException {
 		// mock third party server
@@ -43,7 +43,7 @@ public class TestJokerServiceWireMock {
 		wireMockServer.start();
 
 		webClient = WebClient.create(vertx);
-		
+
 		// service instance
 		var jokeURL = String.format("http://localhost:%d/lalala", wireMockPort);
 		jokerService = new JokerServiceImpl(webClient, jokeURL, jokeURL);
@@ -60,12 +60,8 @@ public class TestJokerServiceWireMock {
 	void getJokeTest(VertxTestContext testContext) {
 		// stub
 		configureFor("localhost", wireMockPort);
-		stubFor(
-				get(anyUrl())
-				.withHeader("Accept", equalTo("application/json"))
-				.willReturn(aResponse()
-							.withStatus(200)
-							.withBody(getWithBodyStub())));
+		stubFor(get(anyUrl()).withHeader("Accept", equalTo("application/json"))
+				.willReturn(aResponse().withStatus(200).withBody(getWithBodyStub())));
 		// execute
 		jokerService.getJoke().subscribe(result -> {
 			assertTrue(result.getSetup().equalsIgnoreCase(setupStub));
@@ -80,7 +76,7 @@ public class TestJokerServiceWireMock {
 		socket.close();
 		return port;
 	}
-	
+
 	private String getWithBodyStub() {
 		StringBuilder sBuilder = new StringBuilder();
 		sBuilder.append("{");
@@ -90,15 +86,15 @@ public class TestJokerServiceWireMock {
 		sBuilder.append(",\"setup\":\"").append(setupStub).append("\"");
 		sBuilder.append(",\"delivery\":\"").append(deliveryStub).append("\"");
 		sBuilder.append(",\"flags\":{");
-			sBuilder.append("\"nsfw\":false");
-			sBuilder.append(",\"religious\":false");
-			sBuilder.append(",\"political\":false");
-			sBuilder.append(",\"racist\":false");
-			sBuilder.append(",\"sexist\":false}");
+		sBuilder.append("\"nsfw\":false");
+		sBuilder.append(",\"religious\":false");
+		sBuilder.append(",\"political\":false");
+		sBuilder.append(",\"racist\":false");
+		sBuilder.append(",\"sexist\":false}");
 		sBuilder.append(",\"id\":49");
 		sBuilder.append(",\"lang\":\"en\"");
 		sBuilder.append("}");
 		return sBuilder.toString();
 	}
-	
+
 }

@@ -13,15 +13,13 @@ import io.vertx.reactivex.core.Vertx;
 
 @ExtendWith(VertxExtension.class)
 public class TestMainVerticle {
-	
-	
+
+
 	@BeforeEach
 	void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
-		vertx.deployVerticle(new MainExampleVertx(), testContext.succeeding(
-				id -> testContext.completeNow())
-    	);
+		vertx.deployVerticle(new MainExampleVertx(), testContext.succeeding(id -> testContext.completeNow()));
 	}
-	
+
 	@Test
 	@DisplayName("Execute main during 3 seconds")
 	void mainExampleVertxTest(VertxTestContext testContext) {
@@ -33,6 +31,6 @@ public class TestMainVerticle {
 		}
 		testContext.completeNow();
 	}
-  
+
 
 }

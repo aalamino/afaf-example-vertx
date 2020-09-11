@@ -14,20 +14,20 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 
 @ExtendWith(VertxExtension.class)
 public class TestJokerServiceVertx {
-	
+
 	private WebClient webClient;
 	private JokerService jokerService;
-	
+
 	@BeforeEach
 	void prepare(Vertx vertx, VertxTestContext testContext) {
 		webClient = WebClient.create(vertx);
 		var jokesUrlAny = "https://sv443.net/jokeapi/v2/joke/Any?type=twopart";
 		var jokesUrlProgramming = "https://sv443.net/jokeapi/v2/joke/Programming?type=twopart";
 
-		jokerService = new JokerServiceImpl(webClient, jokesUrlAny, jokesUrlProgramming );
+		jokerService = new JokerServiceImpl(webClient, jokesUrlAny, jokesUrlProgramming);
 		testContext.completeNow();
 	}
-	
+
 	@RepeatedTest(3)
 	@DisplayName("Check that jokerService gets a joke filled")
 	void getJokeTest(VertxTestContext testContext) {
@@ -36,7 +36,7 @@ public class TestJokerServiceVertx {
 				assertNotNull(joke);
 				assertNotNull(joke.getSetup());
 				assertNotNull(joke.getDelivery());
-			    testContext.completeNow();
+				testContext.completeNow();
 			});
 		});
 	}

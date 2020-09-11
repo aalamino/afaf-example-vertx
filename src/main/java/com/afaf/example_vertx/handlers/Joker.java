@@ -6,8 +6,8 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 
 public interface Joker extends DefaultRestHandler {
 
-    String RESOURCE_NAME = "";
+	String RESOURCE_NAME = "";
 
-    void getJoke(final RoutingContext routingContext);
-	
+	void getJoke(final RoutingContext routingContext);
+
 }

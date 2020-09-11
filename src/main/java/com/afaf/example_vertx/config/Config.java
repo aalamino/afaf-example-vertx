@@ -36,7 +36,7 @@ public class Config extends SharedConfig {
 	}
 
 	public boolean isTracingEnabled() {
-		return (Boolean)getValue("gcloud.tracing.enabled");
+		return (Boolean) getValue("gcloud.tracing.enabled");
 	}
 
 

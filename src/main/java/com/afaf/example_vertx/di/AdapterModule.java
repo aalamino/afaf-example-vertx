@@ -12,7 +12,7 @@ import dagger.Provides;
 
 @Module
 public class AdapterModule {
-	
+
 	@Provides
 	@Singleton
 	public DomainAdapter<JokeDTO, Joke> provideJokeDTOAdapter() {

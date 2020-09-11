@@ -23,26 +23,26 @@ import io.vertx.reactivex.ext.web.RoutingContext;
 
 @ExtendWith(MockitoExtension.class)
 public class TestJokerMockito {
-	
+
 	private Joker joker;
-	
+
 	@Mock
 	private JokerService jokerService;
 	@Mock
 	private DomainAdapter<JokeDTO, Joke> adapter;
-	
+
 	private JokeDTO jokeDTO;
 	private Joke joke;
-	
+
 	@Mock
 	private RoutingContext routingContext;
-	
+
 	@Mock
 	private HttpServerResponse response;
-	
-	
+
+
 	@BeforeEach
-	public void setup(){
+	public void setup() {
 		joker = new JokerImpl(jokerService, adapter);
 		jokeDTO = new JokeDTO("setup test", "delivery test");
 		joke = new Joke("setup test", "delivery test");
@@ -51,13 +51,13 @@ public class TestJokerMockito {
 	@Test
 	void getJokeTest() {
 		doReturn(jokeDTO).when(adapter).adapt(joke);
-        when(jokerService.getJoke()).thenReturn(Single.just(joke));
-		
+		when(jokerService.getJoke()).thenReturn(Single.just(joke));
+
 		doReturn(response).when(routingContext).response();
-        doReturn(response).when(response).setStatusCode(HttpResponseStatus.OK.code());
-        
-        joker.getJoke(routingContext);
-        verify(response).end(Json.encodePrettily(jokeDTO));
+		doReturn(response).when(response).setStatusCode(HttpResponseStatus.OK.code());
+
+		joker.getJoke(routingContext);
+		verify(response).end(Json.encodePrettily(jokeDTO));
 	}
 
 }

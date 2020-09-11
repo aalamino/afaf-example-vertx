@@ -13,31 +13,26 @@ import io.vertx.reactivex.ext.web.Router;
 import io.vertx.reactivex.ext.web.RoutingContext;
 
 public class JokerImpl implements Joker {
-	
+
 	private JokerService jokerService;
 	private DomainAdapter<JokeDTO, Joke> adapter;
-	
+
 	@Inject
-	public JokerImpl(JokerService jokerService, 
-			DomainAdapter<JokeDTO, Joke> adapter) {
+	public JokerImpl(JokerService jokerService, DomainAdapter<JokeDTO, Joke> adapter) {
 		this.jokerService = jokerService;
 		this.adapter = adapter;
 	}
-	
+
 	@Override
 	public void addHandlersTo(Router router) {
 		addGetHandlerTo(router, RESOURCE_NAME, this::getJoke);
 	}
-	
+
 	@Override
 	public void getJoke(final RoutingContext context) {
-		jokerService.getJoke()
-		.subscribe(
-				joke -> {
-					makeResponse(context, HttpResponseStatus.OK.code(), 
-							Json.encodePrettily(adapter.adapt(joke)));
-				}, context::fail
-		);
-    }
+		jokerService.getJoke().subscribe(joke -> {
+			makeResponse(context, HttpResponseStatus.OK.code(), Json.encodePrettily(adapter.adapt(joke)));
+		}, context::fail);
+	}
 
 }

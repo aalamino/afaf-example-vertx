@@ -21,70 +21,55 @@ import io.vertx.reactivex.ext.web.handler.LoggerHandler;
 import io.vertx.reactivex.ext.web.handler.ResponseTimeHandler;
 
 public class Server extends AbstractVerticle {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-	
+
 	private HelloWorld helloWorld;
 	private Joker joker;
 
 	@Override
 	public Completable rxStart() {
-		vertx.exceptionHandler(error 
-				-> LOGGER.info(error.getMessage() + error.getCause() + 
-						Arrays.toString(error.getStackTrace()) + 
-						error.getLocalizedMessage())
-		);
-		
-//		var sharedConfig = Config.getInstance();
-	    var httpHost = Config.DEFAULT_HOST;
-	    var httpPort = Config.DEFAULT_PORT;
-//	    var httpHost = sharedConfig.getHost().orElse(Config.DEFAULT_HOST);
-//	    var httpPort = sharedConfig.getPort().orElse(Config.DEFAULT_PORT);
-	    
+		vertx.exceptionHandler(error -> LOGGER.info(error.getMessage() + error.getCause()
+				+ Arrays.toString(error.getStackTrace()) + error.getLocalizedMessage()));
+
+		// var sharedConfig = Config.getInstance();
+		var httpHost = Config.DEFAULT_HOST;
+		var httpPort = Config.DEFAULT_PORT;
+		// var httpHost = sharedConfig.getHost().orElse(Config.DEFAULT_HOST);
+		// var httpPort = sharedConfig.getPort().orElse(Config.DEFAULT_PORT);
+
 		helloWorld = new HelloWorld();
-	    var handlerComponent = DaggerHandlerComponent.create();
-	    joker = handlerComponent.buildJoker();
-	    
-		return OpenAPI3RouterFactory
-	            .rxCreate(vertx, "webroot/swagger/swagger.yml")
-	            .doOnError(LOGGER::error)
-	            .map(routerFactory 
-	            		-> {
-	            			addGlobalHandlers(routerFactory);
-			                routeHandlersBySwaggerOperationId(routerFactory);
-			                Router router = routerFactory.getRouter();
-//			                router.get("/hello/:name").handler(helloWorld::helloByName);
-//			                router.get("/joker").handler(joker::getJoke);
-			                return router;
-	            })
-	            .flatMap(router 
-	            		-> startServer(httpHost, httpPort, router)
-	            )
-	            .flatMapCompletable(httpServer 
-	            		-> {
-	            			LOGGER.info("HTTP server started on http://{0}:{1}", 
-	            					httpHost, httpPort);
-	            			return Completable.complete();
-	            });
+		var handlerComponent = DaggerHandlerComponent.create();
+		joker = handlerComponent.buildJoker();
+
+		return OpenAPI3RouterFactory.rxCreate(vertx, "webroot/swagger/swagger.yml").doOnError(LOGGER::error)
+				.map(routerFactory -> {
+					addGlobalHandlers(routerFactory);
+					routeHandlersBySwaggerOperationId(routerFactory);
+					Router router = routerFactory.getRouter();
+					// router.get("/hello/:name").handler(helloWorld::helloByName);
+					// router.get("/joker").handler(joker::getJoke);
+					return router;
+				}).flatMap(router -> startServer(httpHost, httpPort, router)).flatMapCompletable(httpServer -> {
+					LOGGER.info("HTTP server started on http://{0}:{1}", httpHost, httpPort);
+					return Completable.complete();
+				});
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void addGlobalHandlers(OpenAPI3RouterFactory routerFactory) {
-        routerFactory
-	        .addGlobalHandler(CorsHandler.create("*"))
-	        .addGlobalHandler(LoggerHandler.create())
-	        .addGlobalHandler(ResponseTimeHandler.create())
-	        .addGlobalHandler(BodyHandler.create());
-    }
-	
+		routerFactory.addGlobalHandler(CorsHandler.create("*")).addGlobalHandler(LoggerHandler.create())
+				.addGlobalHandler(ResponseTimeHandler.create()).addGlobalHandler(BodyHandler.create());
+	}
+
 	private void routeHandlersBySwaggerOperationId(OpenAPI3RouterFactory routerFactory) {
-        routerFactory.addHandlerByOperationId("helloByName", helloWorld::helloByName);
-        routerFactory.addHandlerByOperationId("getJoke", joker::getJoke);
-    }
-	
+		routerFactory.addHandlerByOperationId("helloByName", helloWorld::helloByName);
+		routerFactory.addHandlerByOperationId("getJoke", joker::getJoke);
+	}
+
 	private Single<HttpServer> startServer(String httpHost, Integer httpPort, Router router) {
-        return vertx.createHttpServer().requestHandler(router).rxListen(httpPort, httpHost);
-    }
+		return vertx.createHttpServer().requestHandler(router).rxListen(httpPort, httpHost);
+	}
 
 
 }

@@ -8,19 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Joke {
-	
+
 	@JsonProperty("setup")
 	private String setup;
 	@JsonProperty("delivery")
 	private String delivery;
-    
-    @JsonCreator
-    public Joke(@JsonProperty("setup") String setup, 
-    		@JsonProperty("delivery") String delivery) {
-        this.setup = setup;
-        this.delivery = delivery;
+
+	@JsonCreator
+	public Joke(@JsonProperty("setup") String setup, @JsonProperty("delivery") String delivery) {
+		this.setup = setup;
+		this.delivery = delivery;
 	}
-    
+
 
 	public String getSetup() {
 		return setup;
@@ -39,19 +38,16 @@ public class Joke {
 	}
 
 	public Joke getMajorJoke(Joke otherJoke) {
-		return (this.isNotBlank() && otherJoke.isNotBlank()) 
-				? (this.length() >= otherJoke.length()) 
-						? this : otherJoke
+		return (this.isNotBlank() && otherJoke.isNotBlank()) ? (this.length() >= otherJoke.length()) ? this : otherJoke
 				: new Joke("", "");
 	}
-	
+
 	public boolean isNotBlank() {
-		return StringUtils.isNotBlank(setup) && 
-				StringUtils.isNotBlank(delivery);
+		return StringUtils.isNotBlank(setup) && StringUtils.isNotBlank(delivery);
 	}
-	
+
 	public int length() {
-		return setup.length()+delivery.length();
+		return setup.length() + delivery.length();
 	}
-	
+
 }

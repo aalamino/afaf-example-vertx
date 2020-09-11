@@ -1,15 +1,15 @@
 package com.afaf.example_vertx.dto;
 
 public class JokeDTO {
-	
+
 	private String setup;
 	private String delivery;
-    
-    public JokeDTO() {
-    	
-    }
-    
-    public JokeDTO(String setup, String delivery) {
+
+	public JokeDTO() {
+
+	}
+
+	public JokeDTO(String setup, String delivery) {
 		this.setup = setup;
 		this.delivery = delivery;
 	}
